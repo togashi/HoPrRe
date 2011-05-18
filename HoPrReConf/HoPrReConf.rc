@@ -1,0 +1,135 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 日本語 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
+#ifdef _WIN32
+LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
+#pragma code_page(932)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_LIST DIALOGEX 0, 0, 297, 119
+STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "HoPrRe 設定"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "ホットキー登録制限ルール(&R):",IDC_STATIC,7,11,97,8
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,22,283,90
+    PUSHBUTTON      "作成(&C)...",IDC_NEW,135,7,50,14
+    PUSHBUTTON      "削除(&D)",IDC_DEL,187,7,50,14
+    PUSHBUTTON      "編集(&E)...",IDC_EDIT,240,7,50,14
+END
+
+IDD_EDIT DIALOGEX 0, 0, 318, 171
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "ホットキー登録制限ルール"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "ホットキー",IDC_GRP_HOTKEY,7,7,304,51
+    CONTROL         "&Win",IDC_CHECK_MOD_W,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,26,20,28,10
+    CONTROL         "&Ctrl",IDC_CHECK_MOD_C,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,71,20,27,10
+    CONTROL         "&Alt",IDC_CHECK_MOD_A,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,115,20,25,10
+    CONTROL         "&Shift",IDC_CHECK_MOD_S,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,157,20,31,10
+    LTEXT           "キー(&K): ",IDC_STATIC_VK,27,36,28,8
+    EDITTEXT        IDC_EDIT_VK,58,34,74,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_HOTKEY,"msctls_hotkey32",WS_BORDER | WS_TABSTOP,64,40,73,14
+    CONTROL         "コード指定(&N)",IDC_CHECK_VKCODE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,137,36,54,10
+    GROUPBOX        "プロセス",IDC_GRP_MOD,7,60,304,49
+    LTEXT           "モジュールファイル名(&M):",IDC_STATIC_MOD,28,75,76,8
+    EDITTEXT        IDC_EDIT_MOD,109,72,102,14,ES_AUTOHSCROLL
+    LTEXT           "ワイルドカード '*' および '?' が使用可能。また、大文字と小文字は区別されません。",IDC_STATIC_MOD_APPENDIX,29,93,259,8
+    LTEXT           "",IDC_STATIC_EFFECT,7,114,304,32,0,WS_EX_STATICEDGE
+    DEFPUSHBUTTON   "OK",IDOK,208,150,50,14
+    PUSHBUTTON      "キャンセル",IDCANCEL,261,150,50,14
+    EDITTEXT        IDC_EDITSHOW,196,34,108,14,ES_AUTOHSCROLL | ES_READONLY | WS_DISABLED
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_LIST, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 290
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+
+    IDD_EDIT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 311
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 164
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon1.ico"
+#endif    // 日本語 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
