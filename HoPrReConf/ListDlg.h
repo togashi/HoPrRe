@@ -13,6 +13,7 @@ public:
 		MSG_WM_INITDIALOG(OnInitDialog)
 		MSG_WM_SYSCOMMAND(OnSysCommand)
 		COMMAND_ID_HANDLER_EX(IDCLOSE, OnCmdClose)
+		COMMAND_ID_HANDLER_EX(IDC_CHECK1, OnCmdCheck)
 		COMMAND_ID_HANDLER_EX(IDC_NEW, OnCmdNew)
 		COMMAND_ID_HANDLER_EX(IDC_DEL, OnCmdDel)
 		COMMAND_ID_HANDLER_EX(IDC_EDIT, OnCmdEdit)
@@ -37,10 +38,12 @@ private:
 	CString m_RegKeyPath;
 	CString m_RegValueNameFormat;
 	
+	CButton m_ChkLog;
 	CListViewCtrl m_List;
 
 	void UpdateList(void);
 	void UpdateButtonStates(void);
+	void UpdateSettings(void);
 	CString GenerateNewValueName(void);
 private:
 	// MSG_WM_*
@@ -49,6 +52,7 @@ private:
 	
 	// COMMAND_ID_HANDLER_EX
 	void OnCmdClose(UINT, int, HWND);
+	void OnCmdCheck(UINT, int, HWND);
 	void OnCmdNew(UINT, int, HWND);
 	void OnCmdDel(UINT, int, HWND);
 	void OnCmdEdit(UINT, int, HWND);

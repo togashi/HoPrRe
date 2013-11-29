@@ -24,6 +24,7 @@
 #define IDC_STATIC_EFFECT               225
 #define IDC_HOTKEY                      226
 #define IDC_EDITSHOW                    227
+#define IDC_CHECK1                      228
 
 // Next default values for new objects
 // 
@@ -31,7 +32,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        205
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         228
+#define _APS_NEXT_CONTROL_VALUE         229
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

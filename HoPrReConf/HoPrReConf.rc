@@ -16,13 +16,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 日本語 resources
+// 日本語 (日本) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_JPN)
-#ifdef _WIN32
 LANGUAGE LANG_JAPANESE, SUBLANG_DEFAULT
 #pragma code_page(932)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -62,11 +60,13 @@ STYLE DS_SETFONT | DS_SETFOREGROUND | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CA
 CAPTION "HoPrRe 設定"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    LTEXT           "ホットキー登録制限ルール(&R):",IDC_STATIC,7,11,97,8
-    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,22,283,90
-    PUSHBUTTON      "作成(&C)...",IDC_NEW,135,7,50,14
-    PUSHBUTTON      "削除(&D)",IDC_DEL,187,7,50,14
-    PUSHBUTTON      "編集(&E)...",IDC_EDIT,240,7,50,14
+    LTEXT           "ホットキー登録制限ルール(&R):",IDC_STATIC,7,25,97,8
+    CONTROL         "",IDC_LIST,"SysListView32",LVS_REPORT | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,36,283,76
+    PUSHBUTTON      "作成(&C)...",IDC_NEW,135,21,50,14
+    PUSHBUTTON      "削除(&D)",IDC_DEL,187,21,50,14
+    PUSHBUTTON      "編集(&E)...",IDC_EDIT,240,21,50,14
+    CONTROL         "ログファイル (%USERPROFILE%\\hoprre_log.txt) を記録する(L)",IDC_CHECK1,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,283,12
 END
 
 IDD_EDIT DIALOGEX 0, 0, 318, 171
@@ -100,7 +100,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_LIST, DIALOG
     BEGIN
@@ -129,7 +129,7 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "icon1.ico"
-#endif    // 日本語 resources
+#endif    // 日本語 (日本) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

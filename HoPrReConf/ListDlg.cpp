@@ -56,6 +56,9 @@ LRESULT CListDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 	
 	SetIcon(::LoadIcon(_AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE(IDI_ICON1)), FALSE);
 
+	m_ChkLog.Attach(GetDlgItem(IDC_CHECK1));
+	UpdateSettings();
+	
 	m_List.Attach(GetDlgItem(IDC_LIST));
 	m_List.InsertColumn(1, _T("ホットキー"), LVCFMT_LEFT, 200, -1);
 	m_List.InsertColumn(2, _T("モジュール名"), LVCFMT_LEFT, 200, 0);
@@ -129,6 +132,18 @@ void CListDlg::UpdateButtonStates(void)
 	GetDlgItem(IDC_EDIT).EnableWindow(selcount == 1);
 }
 
+void CListDlg::UpdateSettings(void) {
+	HKEY hKey;
+	BOOL bValue;
+	DWORD dwSize = sizeof(bValue);
+	if (::RegOpenKeyEx(m_hRootKey, m_RegKeyPath, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+		if (::RegQueryValueEx(hKey, _T("LogEnabled"), NULL, NULL, reinterpret_cast<LPBYTE>(&bValue), &dwSize) == ERROR_SUCCESS) {
+			m_ChkLog.SetCheck(bValue != 0 ? BST_CHECKED : BST_UNCHECKED);
+		}
+		::RegCloseKey(hKey);
+	}
+}
+
 CString CListDlg::GenerateNewValueName(void)
 {
 	CString res;
@@ -148,6 +163,16 @@ CString CListDlg::GenerateNewValueName(void)
 		::RegCloseKey(hKey);
 	}
 	return res;
+}
+
+void CListDlg::OnCmdCheck(UINT, int, HWND) {
+	HKEY hKey;
+	BOOL bValue = (m_ChkLog.GetCheck() == BST_CHECKED);
+	if (::RegOpenKeyEx(m_hRootKey, m_RegKeyPath, 0, KEY_READ | KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+		if (::RegSetValueEx(hKey, _T("LogEnabled"), 0, REG_BINARY, reinterpret_cast<const BYTE*>(&bValue), sizeof(bValue)) == ERROR_SUCCESS) {
+		}
+		::RegCloseKey(hKey);
+	}
 }
 
 void CListDlg::OnCmdNew(UINT, int, HWND)
