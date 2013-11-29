@@ -341,6 +341,9 @@ typedef BOOL (WINAPI *PFNREGISTERHOTKEY)(HWND, INT, UINT, UINT);
 #define FLAGSTR(a) if (fsModifiers & (a)) { ::_ftprintf(f, _T(" %s"), _T(#a)); }
 #define MOD_KEYS (MOD_ALT | MOD_CONTROL | MOD_SHIFT | MOD_WIN)
 
+TCHAR g_RegPath[MAX_PATH + 1];
+HKEY g_RegRoot = HKEY_CURRENT_USER;
+
 struct LOGFILE {
 	TCHAR path[MAX_PATH + 1];
 	LOGFILE() {
@@ -348,25 +351,37 @@ struct LOGFILE {
 	}
 } g_LogFile;
 
+BOOL IsLogEnabled(void) {
+	HKEY hKey;
+	BOOL bValue;
+	DWORD dwSize = sizeof(bValue);
+	if (::RegOpenKeyEx(g_RegRoot, g_RegPath, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+		if (::RegQueryValueEx(hKey, _T("LogEnabled"), NULL, NULL, reinterpret_cast<LPBYTE>(&bValue), &dwSize) == ERROR_SUCCESS) {
+		}
+		::RegCloseKey(hKey);
+	}
+	return bValue;
+}
+
 BOOL WINAPI Hook_RegisterHotKey(HWND hWnd, INT id, UINT fsModifiers, UINT vk)
 {
-	#ifdef _DEBUG
-	FILE *f;
-	::_tfopen_s(&f, g_LogFile.path, _T("a"));
-	if (f != NULL) {
-		::_ftprintf(f, _T("%d:"), id);
-		FLAGSTR(MOD_ALT);
-		FLAGSTR(MOD_CONTROL);
-		FLAGSTR(MOD_SHIFT);
-		FLAGSTR(MOD_WIN);
-		if (vk >= 'A' && vk <= 'Z') {
-			::_ftprintf(f, _T(" %c\n"), vk);
-		} else {
-			::_ftprintf(f, _T(" 0x%X\n"), vk);
+	if (IsLogEnabled()) {
+		FILE *f;
+		::_tfopen_s(&f, g_LogFile.path, _T("a"));
+		if (f != NULL) {
+			::_ftprintf(f, _T("%d:"), id);
+			FLAGSTR(MOD_ALT);
+			FLAGSTR(MOD_CONTROL);
+			FLAGSTR(MOD_SHIFT);
+			FLAGSTR(MOD_WIN);
+			if (vk >= 'A' && vk <= 'Z') {
+				::_ftprintf(f, _T(" %c\n"), vk);
+			} else {
+				::_ftprintf(f, _T(" 0x%X\n"), vk);
+			}
+			::fclose(f);
 		}
-		::fclose(f);
 	}
-	#endif
 	
 	UINT mods = fsModifiers & MOD_KEYS;
 	for (HOPRRE_ENTRY *cur = g_Applied; cur != NULL; cur = cur->pNext) {
@@ -374,20 +389,20 @@ BOOL WINAPI Hook_RegisterHotKey(HWND hWnd, INT id, UINT fsModifiers, UINT vk)
 		BOOL match_mod = (cur->c.fsModifiers == 0xFFFFFFFF) || (cur->c.fsModifiers == mods);
 		BOOL match_vk = (cur->c.vk == 0xFFFFFFFF) || (cur->c.vk == vk);
 		
-		#ifdef _DEBUG
-		FILE *f;
-		::_tfopen_s(&f, g_LogFile.path, _T("a"));
-		if (f != NULL) {
-			::_ftprintf(
-				f,
-				_T("%s:%d/%d; %s:%d/%d; %s:%d/%d;\r\n"),
-				(match_id ? _T("ID") : _T("id")) ,cur->c.id, id,
-				(match_mod ? _T("MOD") : _T("mod")), cur->c.fsModifiers, mods,
-				(match_vk ? _T("VK") : _T("vk")), cur->c.vk, vk
-			);
-			::fclose(f);
+		if (IsLogEnabled()) {
+			FILE *f;
+			::_tfopen_s(&f, g_LogFile.path, _T("a"));
+			if (f != NULL) {
+				::_ftprintf(
+					f,
+					_T("%s:%d/%d; %s:%d/%d; %s:%d/%d;\r\n"),
+					(match_id ? _T("ID") : _T("id")) ,cur->c.id, id,
+					(match_mod ? _T("MOD") : _T("mod")), cur->c.fsModifiers, mods,
+					(match_vk ? _T("VK") : _T("vk")), cur->c.vk, vk
+				);
+				::fclose(f);
+			}
 		}
-		#endif
 		
 		if (match_id && match_mod && match_vk) {
 			switch (cur->c.dwAction) {
@@ -409,6 +424,10 @@ BOOL WINAPI Hook_RegisterHotKey(HWND hWnd, INT id, UINT fsModifiers, UINT vk)
 	return ((PFNREGISTERHOTKEY)(PROC) *(g_pRegisterHotKey))(hWnd, id, fsModifiers, vk);
 }
 
+
+
+
+
 // 適用されるリストを初期化
 void InitializeAppliedList(HMODULE hModule) {
 	g_Applied = NULL;
@@ -418,31 +437,29 @@ void InitializeAppliedList(HMODULE hModule) {
 	PTCHAR fs = ::_tcsrchr(fn, _T('\\'));
 	fs = (fs == NULL) ? fn : fs + 1;
 
-	TCHAR szRegPath[MAX_PATH + 1];
-	if (::LoadString(hModule, IDS_REG_CONFIG, szRegPath, MAX_PATH) == 0) {
-		::_tcscpy_s(szRegPath, MAX_PATH, _T("HKCU\\Software\\HoPrRe"));
+	if (::LoadString(hModule, IDS_REG_CONFIG, g_RegPath, MAX_PATH) == 0) {
+		::_tcscpy_s(g_RegPath, MAX_PATH, _T("HKCU\\Software\\HoPrRe"));
 	}
 	TCHAR szVNPat[80];
 	if (::LoadString(hModule, IDS_REG_CONFIG_VFMT, szVNPat, 80) == 0) {
 		::_tcscpy_s(szVNPat, 80, _T("RC_*"));
 	}
 
-	HKEY hRoot = HKEY_CURRENT_USER;
-	LPTSTR lpszRegSubKey = ::_tcschr(szRegPath, _T('\\'));
+	LPTSTR lpszRegSubKey = ::_tcschr(g_RegPath, _T('\\'));
 	if (lpszRegSubKey != NULL) {
 		*lpszRegSubKey = _T('\0');
 		lpszRegSubKey++;
-		if (::_tcsicmp(szRegPath, _T("HKEY_LOCAL_MACHINE")) == 0 || ::_tcsicmp(szRegPath, _T("HKLM")) == 0) {
-			hRoot = HKEY_LOCAL_MACHINE;
-		} else if (::_tcsicmp(szRegPath, _T("HKEY_CURRENT_USER")) == 0 || ::_tcsicmp(szRegPath, _T("HKCU")) == 0) {
-			hRoot = HKEY_CURRENT_USER;
+		if (::_tcsicmp(g_RegPath, _T("HKEY_LOCAL_MACHINE")) == 0 || ::_tcsicmp(g_RegPath, _T("HKLM")) == 0) {
+			g_RegRoot = HKEY_LOCAL_MACHINE;
+		} else if (::_tcsicmp(g_RegPath, _T("HKEY_CURRENT_USER")) == 0 || ::_tcsicmp(g_RegPath, _T("HKCU")) == 0) {
+			g_RegRoot = HKEY_CURRENT_USER;
 		}
 	} else {
-		lpszRegSubKey = szRegPath;
+		lpszRegSubKey = g_RegPath;
 	}
 	
 	HKEY hKey = NULL;
-	if (::RegOpenKeyEx(hRoot, lpszRegSubKey, 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
+	if (::RegOpenKeyEx(g_RegRoot, lpszRegSubKey, 0, KEY_READ, &hKey) != ERROR_SUCCESS) {
 		return;
 	}
 	
@@ -474,22 +491,22 @@ void InitializeAppliedList(HMODULE hModule) {
 		}
 	}
 
-	#ifdef _DEBUG
-	FILE *f;
-	::_tfopen_s(&f, g_LogFile.path, _T("a"));
-	if (f != NULL) {
-		int count = 0;
-		HOPRRE_ENTRY *cur = g_Applied;
-		while (cur != NULL) {
-			count++;
-			cur = cur->pNext;
+	if (IsLogEnabled()) {
+		FILE *f;
+		::_tfopen_s(&f, g_LogFile.path, _T("a"));
+		if (f != NULL) {
+			int count = 0;
+			HOPRRE_ENTRY *cur = g_Applied;
+			while (cur != NULL) {
+				count++;
+				cur = cur->pNext;
+			}
+			if (count > 0) {
+				::_ftprintf(f, _T("%s: %d rules applied.\r\n"), fs, count);
+			}
+			::fclose(f);
 		}
-		if (count > 0) {
-			::_ftprintf(f, _T("%s: %d rules applied.\r\n"), fs, count);
-		}
-		::fclose(f);
 	}
-	#endif
 }
 
 // 適用されるリストを破棄

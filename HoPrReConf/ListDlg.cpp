@@ -168,7 +168,7 @@ CString CListDlg::GenerateNewValueName(void)
 void CListDlg::OnCmdCheck(UINT, int, HWND) {
 	HKEY hKey;
 	BOOL bValue = (m_ChkLog.GetCheck() == BST_CHECKED);
-	if (::RegOpenKeyEx(m_hRootKey, m_RegKeyPath, 0, KEY_READ | KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+	if (::RegCreateKeyEx(m_hRootKey, m_RegKeyPath, 0, NULL, 0, KEY_READ | KEY_WRITE, NULL, &hKey, NULL) == ERROR_SUCCESS) {
 		if (::RegSetValueEx(hKey, _T("LogEnabled"), 0, REG_BINARY, reinterpret_cast<const BYTE*>(&bValue), sizeof(bValue)) == ERROR_SUCCESS) {
 		}
 		::RegCloseKey(hKey);
